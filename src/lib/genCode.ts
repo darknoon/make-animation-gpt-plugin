@@ -5,8 +5,8 @@ const configuration = new Configuration({
   organization: process.env.OPENAI_ORG,
 })
 const openai = new OpenAIApi(configuration)
-// const model = 'gpt-4'
-const model = 'gpt-3.5-turbo'
+const model = 'gpt-4'
+// const model = 'gpt-3.5-turbo'
 
 export async function generateVideoCode(
   messages: ChatCompletionRequestMessage[]
