@@ -9,8 +9,8 @@ const schema = {
   schema_version: 'v1',
   name_for_human: 'Generate Animation',
   name_for_model: 'gen_animated_video',
-  description_for_human: '',
-  description_for_model: ``,
+  description_for_human: 'Generate an animated video from a description',
+  description_for_model: `Generate an animated video from a description. Make sure to list multiple scenes of content, the generated video will be 15 seconds long.`,
   auth: {
     type: 'none',
   },

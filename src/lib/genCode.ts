@@ -17,6 +17,7 @@ export async function generateVideoCode(
   const completion = await openai.createChatCompletion({
     model,
     messages,
+    temperature: 0,
   })
   const content = completion.data.choices[0].message?.content
 

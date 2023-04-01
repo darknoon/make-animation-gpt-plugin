@@ -5,6 +5,7 @@ import { readFile } from 'fs/promises'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ChatCompletionRequestMessage } from 'openai'
 
+const sep = '```'
 const wrapper = `
 import { registerRoot, Composition } from "remotion"
 export const RemotionRoot = () => {
@@ -37,45 +38,69 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { prompt } = req.body
-  if (!prompt) {
-    res.status(400).json({ error: 'No prompt provided' })
-    return
-  }
-
-  const messages: Array<ChatCompletionRequestMessage> = buildPrompt(prompt)
-
-  // retry up to 3 times, passing the error into the next attempt at generating the code
-  let errors: Error[] = []
-  for (let i = 0; i < 3; i++) {
-    try {
-      const { code } = await generateVideoCode(messages)
-
-      const full = code + wrapper
-
-      const { outputLocation } = await generateVideo(full)
-      // load the video from the output location and upload it to S3
-      const buf = await readFile(outputLocation)
-      const { url } = await writeBufferToS3(buf, 'my-video.mp4')
-
-      res.status(200).json({ url })
-    } catch (e) {
-      if (!(e instanceof Error)) {
-        throw e
-      }
-      errors.push(e)
-
-      console.error('GENERATION ERROR: ', e)
-      // Add error to the messages
-      console.error('error type', e.constructor.name)
-      errors.push(e)
-      messages.push({
-        role: 'assistant',
-        content: `GENERATION ERROR ${formatError(e)}`,
-      })
+  if (req.method === 'POST') {
+    const { prompt } = req.body
+    if (!prompt) {
+      res.status(400).json({ error: 'No prompt provided' })
+      return
     }
+
+    const messages: Array<ChatCompletionRequestMessage> = buildPrompt(prompt)
+
+    // retry up to 3 times, passing the error into the next attempt at generating the code
+    let errors: Error[] = []
+    let lastCode: string | undefined
+    for (let i = 0; i < 3; i++) {
+      const { code } = await generateVideoCode(messages)
+      lastCode = code
+      try {
+        const full = code + wrapper
+
+        const { outputLocation } = await generateVideo(full)
+        // load the video from the output location and upload it to S3
+        const buf = await readFile(outputLocation)
+        const { url } = await writeBufferToS3(buf, 'my-video.mp4')
+
+        res.status(200).json({ url, code })
+        // YAY
+        return
+      } catch (e) {
+        if (!(e instanceof Error)) {
+          throw e
+        }
+        errors.push(e)
+
+        console.error('GENERATION ERROR: ', e)
+        // Add error to the messages
+        console.error('error type', e.constructor.name)
+        errors.push(e)
+        messages.push({
+          role: 'assistant',
+          content: `code: ${sep}${code}${sep}`,
+        })
+        messages.push({
+          role: 'assistant',
+          content: `GENERATION ERROR ${formatError(e)}`,
+        })
+      }
+    } // end for loop
+    res.status(500).json({
+      error: 'Exceeded 3 tries!',
+      errors: errors.map(formatError),
+      code: lastCode,
+    })
+  } else if (req.method === 'OPTIONS') {
+    console.log(`->: OPTIONS`, req.headers)
+    // WHY ISN'T THIS HANDLED BY NEXT.JS?
+    res.setHeader('Access-Control-Allow-Origin', 'https://chat.openai.com')
+    res.setHeader('Access-Control-Allow-Methods', 'POST')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+    res.status(200).send('OK')
+  } else {
+    console.log(`Method not allowed: ${req.method}`)
+    res.status(405).send('Method not allowed')
   }
-  res.status(500).json({ error: 'Exceeded 3 tries!' })
 }
 
 //   res.status(200).json({ code })

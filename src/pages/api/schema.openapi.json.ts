@@ -4,10 +4,7 @@ import { serverUrl } from '@/lib/config'
 
 console.log('serverUrl', serverUrl)
 
-const codeDesc = `The code to be used in the playground, must be valid SwiftUI code for an App.
-Swift code MUST be all in a single file using SwiftUI and App struct marked with @main.
-DO NOT USE triple quotes since they do not exist in JSON.
-ALWAYS carefully escape newlines and quotes in the json.`
+const codeDesc = `The description of the video`
 
 const apiSpec = {
   openapi: '3.0.0',
@@ -21,10 +18,10 @@ const apiSpec = {
     },
   ],
   paths: {
-    '/api/playground/create': {
+    '/api/video/create': {
       post: {
-        summary: 'Create a new Swift playground from code',
-        operationId: 'createPlayground',
+        summary: 'Create generated video',
+        operationId: 'generateVideo',
         requestBody: {
           required: true,
           content: {
@@ -32,14 +29,9 @@ const apiSpec = {
               schema: {
                 type: 'object',
                 properties: {
-                  code: {
+                  prompt: {
                     type: 'string',
                     description: codeDesc,
-                  },
-                  name: {
-                    type: 'string',
-                    description:
-                      'The name of the app that will be created. This MUST match the name of the App struct in the code!',
                   },
                 },
               },
@@ -56,6 +48,7 @@ const apiSpec = {
                   properties: {
                     url: {
                       type: 'string',
+                      description: 'The URL of generated video',
                     },
                   },
                 },
