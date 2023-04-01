@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Tree Leaf</title>
+  </head>
+  <body>
+    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient
+          id="gradient"
+          cx="50%"
+          cy="50%"
+          r="50%"
+          fx="50%"
+          fy="50%"
+        >
+          <stop
+            offset="0%"
+            style="stop-color: rgb(0, 128, 0); stop-opacity: 1"
+          />
+          <stop
+            offset="100%"
+            style="stop-color: rgb(0, 255, 0); stop-opacity: 1"
+          />
+        </radialGradient>
+      </defs>
+      <path d="M100,150 Q80,100,100,50 Q120,100,100,150" fill="url(#gradient)">
+        <animate
+          attributeName="d"
+          dur="1s"
+          repeatCount="indefinite"
+          values="
+            M100,150 Q80,100,100,50 Q120,100,100,150;
+            M100,150 Q70,110,100,50 Q130,110,100,150;
+            M100,150 Q80,100,100,50 Q120,100,100,150"
+        />
+      </path>
+    </svg>
+  </body>
+</html>

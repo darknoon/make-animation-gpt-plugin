@@ -6,15 +6,18 @@ import { tmpdir } from 'os'
 export const generateVideo = async (source: string) => {
   // You only have to do this once, you can reuse the bundle.
   const tempDir = tmpdir()
-  const name = 'bundle.js'
-  const entryPath = `${tempDir}/${name}`
+  const entryFilename = 'bundle.js'
+  const entryPath = `${tempDir}/${entryFilename}`
   writeFileSync(entryPath, source)
+
+  console.log('SOURCE CODE:\n')
+  console.log(source)
 
   console.log('Creating a Webpack bundle of the video')
   const bundleLocation = await bundle(
     entryPath,
     (progress: number) => {
-      console.log('Webpack progress:', progress)
+      //console.log('Webpack progress:', progress)
     },
     {
       // If you have a Webpack override, make sure to add it here
@@ -48,7 +51,7 @@ export const generateVideo = async (source: string) => {
   Review "${entryPath}" for the correct ID.`)
   }
 
-  const outputLocation = `out/${compositionId}.mp4`
+  const outputLocation = `${tempDir}/${compositionId}.mp4`
   console.log('Attempting to render:', outputLocation)
   await renderMedia({
     composition,
