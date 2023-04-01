@@ -1,4 +1,5 @@
-import { buildPrompt, generateVideoCode } from '@/lib/genCode'
+import { generateVideoCode } from '@/lib/genCode'
+import { buildPrompt } from '@/lib/buildPrompt'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(

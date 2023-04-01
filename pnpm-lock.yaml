@@ -19,6 +19,7 @@ specifiers:
   prettier-plugin-tailwindcss: ^0.2.5
   react: 18.2.0
   react-dom: 18.2.0
+  react-is: ^18.2.0
   remotion: ^3.3.80
   styled-components: ^5.3.9
   tailwindcss: ^3.2.7
@@ -39,8 +40,9 @@ dependencies:
   openai: 3.2.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-is: 18.2.0
   remotion: 3.3.80_biqbaboplfbrettd7655fr4n2y
-  styled-components: 5.3.9_biqbaboplfbrettd7655fr4n2y
+  styled-components: 5.3.9_7i5myeigehqah43i5u7wbekgba
   typescript: 5.0.2
 
 devDependencies:
@@ -2178,7 +2180,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.9_biqbaboplfbrettd7655fr4n2y
+      styled-components: 5.3.9_7i5myeigehqah43i5u7wbekgba
     dev: false
 
   /babel-plugin-syntax-jsx/6.18.0:
@@ -4255,6 +4257,10 @@ packages:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: false
 
+  /react-is/18.2.0:
+    resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: false
+
   /react-refresh/0.9.0:
     resolution: {integrity: sha512-Gvzk7OZpiqKSkxsQvO/mbTN1poglhmAV7gR/DdIrRrSMXraRQQlfikRJOr3Nb9GTMPC5kof948Zy6jJZIFtDvQ==}
     engines: {node: '>=0.10.0'}
@@ -4570,7 +4576,7 @@ packages:
       webpack: 5.76.1_esbuild@0.16.12
     dev: false
 
-  /styled-components/5.3.9_biqbaboplfbrettd7655fr4n2y:
+  /styled-components/5.3.9_7i5myeigehqah43i5u7wbekgba:
     resolution: {integrity: sha512-Aj3kb13B75DQBo2oRwRa/APdB5rSmwUfN5exyarpX+x/tlM/rwZA2vVk2vQgVSP6WKaZJHWwiFrzgHt+CLtB4A==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -4588,6 +4594,7 @@ packages:
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-is: 18.2.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
     dev: false

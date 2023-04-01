@@ -1,4 +1,5 @@
-import { buildPrompt, generateVideoCode } from '@/lib/genCode'
+import { generateVideoCode } from '@/lib/genCode'
+import { buildPrompt } from '@/lib/buildPrompt'
 import { generateVideo } from '@/lib/genVideo'
 import { writeBufferToS3 } from '@/lib/s3Client'
 import { readFile } from 'fs/promises'
@@ -39,56 +40,66 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const { prompt } = req.body
-    if (!prompt) {
-      res.status(400).json({ error: 'No prompt provided' })
-      return
-    }
-
-    const messages: Array<ChatCompletionRequestMessage> = buildPrompt(prompt)
-
-    // retry up to 3 times, passing the error into the next attempt at generating the code
-    let errors: Error[] = []
-    let lastCode: string | undefined
-    for (let i = 0; i < 3; i++) {
-      const { code } = await generateVideoCode(messages)
-      lastCode = code
-      try {
-        const full = code + wrapper
-
-        const { outputLocation } = await generateVideo(full)
-        // load the video from the output location and upload it to S3
-        const buf = await readFile(outputLocation)
-        const { url } = await writeBufferToS3(buf, 'my-video.mp4')
-
-        res.status(200).json({ url, code })
-        // YAY
+    try {
+      const { prompt } = req.body
+      if (!prompt) {
+        res.status(400).json({ error: 'No prompt provided' })
         return
-      } catch (e) {
-        if (!(e instanceof Error)) {
-          throw e
-        }
-        errors.push(e)
-
-        console.error('GENERATION ERROR: ', e)
-        // Add error to the messages
-        console.error('error type', e.constructor.name)
-        errors.push(e)
-        messages.push({
-          role: 'assistant',
-          content: `code: ${sep}${code}${sep}`,
-        })
-        messages.push({
-          role: 'assistant',
-          content: `GENERATION ERROR ${formatError(e)}`,
-        })
       }
-    } // end for loop
-    res.status(500).json({
-      error: 'Exceeded 3 tries!',
-      errors: errors.map(formatError),
-      code: lastCode,
-    })
+
+      const messages: Array<ChatCompletionRequestMessage> = buildPrompt(prompt)
+
+      // retry up to 3 times, passing the error into the next attempt at generating the code
+      let errors: Error[] = []
+      let lastCode: string | undefined
+      for (let i = 0; i < 3; i++) {
+        console.log('------------------')
+        console.log(`Try number ${i}`)
+        console.log('------------------')
+        const { code } = await generateVideoCode(messages)
+        lastCode = code
+        try {
+          const full = code + wrapper
+
+          const { outputLocation } = await generateVideo(full)
+          // load the video from the output location and upload it to S3
+          const buf = await readFile(outputLocation)
+          const { url } = await writeBufferToS3(buf, 'my-video.mp4')
+
+          res.status(200).json({ url, code })
+          // YAY
+          return
+        } catch (e) {
+          if (!(e instanceof Error)) {
+            throw e
+          }
+          errors.push(e)
+
+          console.error('GENERATION ERROR: ', e)
+          // Add error to the messages
+          console.error('error type', e.constructor.name)
+          errors.push(e)
+          messages.push({
+            role: 'assistant',
+            content: `code: ${sep}${code}${sep}`,
+          })
+          messages.push({
+            role: 'assistant',
+            content: `GENERATION ERROR ${formatError(e)}`,
+          })
+        }
+      } // end for loop
+      res.status(500).json({
+        error: 'Exceeded 3 tries!',
+        errors: errors.map(formatError),
+        code: lastCode,
+      })
+    } catch (e) {
+      if (!(e instanceof Error)) {
+        throw e
+      }
+      res.status(500).json({ error: `UNEXPECTED ERROR ${e.message}` })
+    }
   } else if (req.method === 'OPTIONS') {
     console.log(`->: OPTIONS`, req.headers)
     // WHY ISN'T THIS HANDLED BY NEXT.JS?
