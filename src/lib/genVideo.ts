@@ -4,9 +4,6 @@ import { writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 
 export const generateVideo = async (source: string) => {
-  // The composition you want to render
-  const compositionId = 'HelloWorld'
-
   // You only have to do this once, you can reuse the bundle.
   const tempDir = tmpdir()
   const name = 'bundle.js'
@@ -39,8 +36,11 @@ export const generateVideo = async (source: string) => {
     inputProps,
   })
 
+  console.log('Found compositions:', comps)
+
   // Select the composition you want to render.
-  const composition = comps.find((c) => c.id === compositionId)
+  const composition = comps[0]
+  const compositionId = composition.id
 
   // Ensure the composition exists
   if (!composition) {
