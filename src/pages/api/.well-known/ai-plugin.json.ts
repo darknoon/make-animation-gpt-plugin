@@ -19,7 +19,7 @@ const schema = {
     url: `${serverUrl}/api/schema.openapi.json`,
     is_user_authenticated: false,
   },
-  // logo_url: ,
+  logo_url: local ? `${serverUrl}/bear-localhost.svg` : `${serverUrl}/bear.svg`,
   contact_email: 'andrew@darknoon.com',
   legal_info_url: 'https://darknoon.com/',
 }

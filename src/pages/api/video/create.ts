@@ -15,7 +15,7 @@ return (
         fps={30}
         height={1080}
         width={1920}
-        durationInFrames={90}
+        durationInFrames={15 * 30}
         component={MyComposition}
     />
     </>
