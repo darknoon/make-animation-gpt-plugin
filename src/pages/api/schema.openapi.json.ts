@@ -9,7 +9,7 @@ const codeDesc = `The description of the video`
 const apiSpec = {
   openapi: '3.0.0',
   info: {
-    title: 'Create Swift Playground API',
+    title: 'Create Animation Video',
     version: '1.0.0',
   },
   servers: [

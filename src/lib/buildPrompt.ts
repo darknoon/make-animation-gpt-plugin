@@ -10,6 +10,34 @@ export function buildPrompt(videoDescription: string) {
 - do not use any libraries other than react and remotion.
 - use style dictionaries to style components.
 - always use the component name "MyComposition" for the main component. This is important for the video generation to work.
+
+the composition will be rendered with the following settings:
+<Composition
+id="my-comp"
+fps={30}
+height={1080}
+width={1920}
+durationInFrames={15 * 30}
+component={MyComposition}
+/>
+
+
+The fundamentals
+The basic idea behind Remotion is that we'll give you a frame number and a blank canvas, and the freedom to render anything you want using React.
+
+Translate
+Translating an element means moving it. A translation can be done on the X, Y or even Z axis. The transformation can be specified in px.
+
+eg ${sep}
+<div
+  style={{
+    height: 100,
+    width: 100,
+    backgroundColor: "red",
+    transform: \`translateX(100px)\`,
+  }}
+/>
+${sep}
 `,
     },
     {
